@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -23,8 +24,22 @@ export function SignIn() {
   });
 
   async function handleSignIn(data: SignInFormData) {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log(data);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      toast.success("Link de autenticação enviado para seu e-mail", {
+        action: {
+          label: "Reenviar",
+          onClick: () => {
+            toast.dismiss();
+            handleSignIn(data);
+          },
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao enviar link de autenticação");
+    }
   }
 
   return (
