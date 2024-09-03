@@ -59,7 +59,7 @@ export function SignUp() {
           </Link>
         </Button>
 
-        <div className="flex w-[350px] flex-col justify-center gap-6">
+        <div className="flex w-full flex-col justify-center gap-6">
           <div className="flex flex-col gap-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">
               Criar conta grátis
