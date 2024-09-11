@@ -4,9 +4,10 @@ import { ptBR } from "date-fns/locale";
 import { ArrowRight, Search, X } from "lucide-react";
 import { useState } from "react";
 
-import { cancelOrder } from "@/api/cancel-order";
+import { ApproveOrder } from "@/api/approve-order";
+import { CancelOrder } from "@/api/cancel-order";
 import { GetOrdersResponse } from "@/api/get-orders";
-import { OrderStatus } from "@/components/order-status";
+import { OrderStatus, OrderStatusType } from "@/components/order-status";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { TableCell, TableRow } from "@/components/ui/table";
@@ -28,30 +29,41 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const { mutateAsync: cancelOrderFn } = useMutation({
-    mutationFn: cancelOrder,
+  function updateOrderStatusOnCache(orderId: string, status: OrderStatusType) {
+    const ordersListCache = queryClient.getQueriesData<GetOrdersResponse>({
+      queryKey: ["orders"],
+    });
+
+    ordersListCache.forEach(([cacheKey, cacheData]) => {
+      if (!cacheData) return;
+
+      queryClient.setQueryData<GetOrdersResponse>(cacheKey, {
+        ...cacheData,
+        orders: cacheData.orders.map((order) => {
+          if (order.orderId === orderId) {
+            return {
+              ...order,
+              status,
+            };
+          }
+
+          return order;
+        }),
+      });
+    });
+  }
+
+  const { mutateAsync: CancelOrderFn } = useMutation({
+    mutationFn: CancelOrder,
     async onSuccess(_, { orderId }) {
-      const ordersListCache = queryClient.getQueriesData<GetOrdersResponse>({
-        queryKey: ["orders"],
-      });
+      updateOrderStatusOnCache(orderId, "canceled");
+    },
+  });
 
-      ordersListCache.forEach(([cacheKey, cacheData]) => {
-        if (!cacheData) return;
-
-        queryClient.setQueryData<GetOrdersResponse>(cacheKey, {
-          ...cacheData,
-          orders: cacheData.orders.map((order) => {
-            if (order.orderId === orderId) {
-              return {
-                ...order,
-                status: "canceled",
-              };
-            }
-
-            return order;
-          }),
-        });
-      });
+  const { mutateAsync: approveOrderFn } = useMutation({
+    mutationFn: ApproveOrder,
+    async onSuccess(_, { orderId }) {
+      updateOrderStatusOnCache(orderId, "processing");
     },
   });
 
@@ -92,7 +104,12 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
       <TableCell className="font-medium">{formatPrice(order.total)}</TableCell>
 
       <TableCell>
-        <Button variant="outline" size="xm">
+        <Button
+          disabled={order.status !== "pending"}
+          onClick={() => approveOrderFn({ orderId: order.orderId })}
+          variant="outline"
+          size="xm"
+        >
           <ArrowRight className="mr-2 h-3 w-3" />
           Aprovar
         </Button>
@@ -101,7 +118,7 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
       <TableCell>
         <Button
           disabled={!["pending", "processing"].includes(order.status)}
-          onClick={() => cancelOrderFn({ orderId: order.orderId })}
+          onClick={() => CancelOrderFn({ orderId: order.orderId })}
           variant="ghost"
           size="xm"
         >
