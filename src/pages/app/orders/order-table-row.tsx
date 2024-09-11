@@ -53,7 +53,7 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
     });
   }
 
-  const { mutateAsync: CancelOrderFn } = useMutation({
+  const { mutateAsync: cancelOrderFn } = useMutation({
     mutationFn: cancelOrder,
     async onSuccess(_, { orderId }) {
       updateOrderStatusOnCache(orderId, "canceled");
@@ -118,7 +118,7 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
       <TableCell>
         <Button
           disabled={!["pending", "processing"].includes(order.status)}
-          onClick={() => CancelOrderFn({ orderId: order.orderId })}
+          onClick={() => cancelOrderFn({ orderId: order.orderId })}
           variant="ghost"
           size="xm"
         >
