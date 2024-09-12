@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/table";
 import { formatPrice } from "@/utils/price-formatter";
 
+import { OrderDetailsSkeleton } from "./order-details-skeleton";
+
 export interface OrderDetailsProps {
   orderId: string;
   open: boolean;
@@ -128,7 +130,7 @@ export function OrderDetails({ orderId, open }: OrderDetailsProps) {
           </Table>
         </div>
       ) : (
-        <p>Carregando...</p>
+        <OrderDetailsSkeleton />
       )}
     </DialogContent>
   );
