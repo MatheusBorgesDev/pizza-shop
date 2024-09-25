@@ -51,7 +51,7 @@ export function Pagination({
             className="h-8 w-8"
           >
             <ChevronLeft className="absolute h-4 w-4" />
-            <span className="sr-only">Próxima página</span>
+            <span className="sr-only">Página anterior</span>
           </Button>
 
           <Button
@@ -61,7 +61,7 @@ export function Pagination({
             className="h-8 w-8"
           >
             <ChevronRight className="absolute h-4 w-4" />
-            <span className="sr-only">Página anterior</span>
+            <span className="sr-only">Próxima página</span>
           </Button>
 
           <Button
