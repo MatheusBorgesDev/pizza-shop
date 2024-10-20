@@ -8,7 +8,7 @@ test("sign in is succesfully", async ({ page }) => {
 
   const toast = page.getByText("Link de autenticação enviado para seu e-mail");
 
-  expect(toast).toBeVisible();
+  await expect(toast).toBeVisible();
 });
 
 test("sign in with wrong credentials", async ({ page }) => {
@@ -19,7 +19,7 @@ test("sign in with wrong credentials", async ({ page }) => {
 
   const toast = page.getByText("Erro ao enviar link de autenticação");
 
-  expect(toast).toBeVisible();
+  await expect(toast).toBeVisible();
 });
 
 test("navigate to new restaurant page", async ({ page }) => {
@@ -29,5 +29,5 @@ test("navigate to new restaurant page", async ({ page }) => {
     .getByRole("link", { name: "Cadastrar novo estabelecimento" })
     .click();
 
-  expect(page.url()).toContain("/sign-up");
+  await expect(page.url()).toContain("/sign-up");
 });

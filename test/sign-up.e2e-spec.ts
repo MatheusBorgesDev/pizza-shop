@@ -11,7 +11,7 @@ test("sign up is succesfully", async ({ page }) => {
 
   const toast = page.getByText("Cadastro realizado com sucesso");
 
-  expect(toast).toBeVisible();
+  await expect(toast).toBeVisible();
 });
 
 test("sign up with error", async ({ page }) => {
@@ -25,7 +25,7 @@ test("sign up with error", async ({ page }) => {
 
   const toast = page.getByText("Erro ao cadastrar estabelecimento");
 
-  expect(toast).toBeVisible();
+  await expect(toast).toBeVisible();
 });
 
 test("navigate to login page", async ({ page }) => {
@@ -33,5 +33,5 @@ test("navigate to login page", async ({ page }) => {
 
   await page.getByRole("link", { name: "Fazer login" }).click();
 
-  expect(page.url()).toContain("/sign-in");
+  await expect(page.url()).toContain("/sign-in");
 });
